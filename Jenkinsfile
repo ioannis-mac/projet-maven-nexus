@@ -34,8 +34,8 @@ pipeline {
                 script {
                     def scannerHome = tool 'sonar_scanner_tool'
                     withSonarQubeEnv('sonarqubeserver') {
-                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=vprofile \
-                        -Dsonar.java.binaries=target/test-classes/com/visualpathit/account/controllerTest/"
+                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=my-app \
+                        -Dsonar.java.binaries=target/test/com/app/"
                     }
                 }
             }
