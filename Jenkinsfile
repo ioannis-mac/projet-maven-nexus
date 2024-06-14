@@ -7,30 +7,45 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
                 // Get some code from a GitHub repository
-                git branch: 'main', url: 'https://github.com/aymendr/projet-maven.git'
+                git branch: 'main' , url: 'https://github.com/aymendr/projet-maven.git'
             }
         }
-        stage('Build') {
+        stage('Build Maven') {
             steps {
-                // Run Maven on a Unix agent.
                 sh "mvn -DskipTests clean package"
+               }
+        }
+        /*stage('SonarQube Analysis') {
+            steps {
+                // Execute SonarQube analysis
+                script {
+                    withSonarQubeEnv('sonar_server') {
+                        sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
+                    }
+                }
+            }
+        }*/ 
+        stage('SonarQube Analysis') {
+            steps {
+                // Execute SonarQube analysis
+                script {
+                    def scannerHome = tool 'sonar_scanner_tool'
+                    withSonarQubeEnv('sonarqubeserver') {
+                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=vprofile \
+                        -Dsonar.java.binaries=target/test-classes/com/visualpathit/account/controllerTest/"
+                    }
+                }
             }
         }
-        stage('Test') {
+        stage("Quality Gate") {
             steps {
-                // Run Maven on a Unix agent.
-                sh "mvn test"
+              timeout(time: 3, unit: 'MINUTES') {
+                waitForQualityGate abortPipeline: true
+              }
             }
-        }     
-        stage('Deploy') {
-            steps {
-                // Run Maven on a Unix agent.
-                echo "Artifact deployed"
-            }
-        }           
+        }        
     }
 }
-
