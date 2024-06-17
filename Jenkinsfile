@@ -35,7 +35,7 @@ pipeline {
                     def scannerHome = tool 'sonar_scanner_tool'
                     withSonarQubeEnv('sonarqubeserver') {
                         sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=my-app \
-                        -Dsonar.java.binaries=target/test/com/app/"
+                        -Dsonar.java.binaries=target/**"
                     }
                 }
             }
