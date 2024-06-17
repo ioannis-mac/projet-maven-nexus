@@ -46,6 +46,9 @@ pipeline {
                 waitForQualityGate abortPipeline: true
               }
             }
-        }        
+        }
+        stage("Nexus"){
+            nexusArtifactUploader artifacts: [[artifactId: 'my-app', classifier: '', file: 'target/my-app-1.2.jar', type: 'jar']], credentialsId: 'nexus_pwd', groupId: 'com.mycompany.app', nexusUrl: '10.185.11.74:8081', nexusVersion: 'nexus3', protocol: 'http', repository: 'repo1', version: '1.2'
+        }
     }
 }
